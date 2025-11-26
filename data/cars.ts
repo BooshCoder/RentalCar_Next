@@ -275,7 +275,6 @@ export function getAllCars(): Car[] {
   return carsData;
 }
 
-// Всі марки з макету Figma
 const ALL_BRANDS = [
   'Aston Martin',
   'Audi',
@@ -288,7 +287,6 @@ const ALL_BRANDS = [
   'HUMMER'
 ];
 
-// Всі ціни з макету Figma
 const ALL_PRICES = [30, 40, 50, 60, 70, 80];
 
 export function getUniqueBrands(): string[] {

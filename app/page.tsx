@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Car } from '@/types';
-import { getAllCarsService } from '@/lib/carsService';
+import { getCarsPageService } from '@/lib/carsService';
 import CarCard from '@/components/CarCard';
 import styles from './page.module.css';
 
@@ -12,17 +12,21 @@ const CARDS_PER_PAGE = 4;
 export default function Home() {
   const [cars, setCars] = useState<Car[]>([]);
   const [loading, setLoading] = useState(true);
-  const [displayedCount, setDisplayedCount] = useState(CARDS_PER_PAGE);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
-    loadCars();
+    loadFirstPage();
   }, []);
 
-  const loadCars = async () => {
+  const loadFirstPage = async () => {
     try {
       setLoading(true);
-      const allCars = await getAllCarsService();
-      setCars(allCars);
+      const response = await getCarsPageService({ page: 1, limit: CARDS_PER_PAGE });
+      setCars(response.cars);
+      setTotalPages(response.totalPages);
+      setCurrentPage(1);
     } catch (error) {
       console.error('Error loading cars:', error);
     } finally {
@@ -30,12 +34,24 @@ export default function Home() {
     }
   };
 
-  const displayedCars = cars.slice(0, displayedCount);
-  const hasMore = displayedCount < cars.length;
-
-  const handleLoadMore = () => {
-    setDisplayedCount(prev => prev + CARDS_PER_PAGE);
+  const handleLoadMore = async () => {
+    if (currentPage >= totalPages || loadingMore) return;
+    
+    try {
+      setLoadingMore(true);
+      const nextPage = currentPage + 1;
+      const response = await getCarsPageService({ page: nextPage, limit: CARDS_PER_PAGE });
+      setCars(prev => [...prev, ...response.cars]);
+      setCurrentPage(nextPage);
+      setTotalPages(response.totalPages);
+    } catch (error) {
+      console.error('Error loading more cars:', error);
+    } finally {
+      setLoadingMore(false);
+    }
   };
+
+  const hasMore = currentPage < totalPages;
 
   return (
     <>
@@ -66,14 +82,18 @@ export default function Home() {
           ) : (
             <>
               <div className={styles.cardsGrid}>
-                {displayedCars.map(car => (
+                {cars.map(car => (
                   <CarCard key={car.id} car={car} />
                 ))}
               </div>
               {hasMore && (
                 <div className={styles.loadMoreWrapper}>
-                  <button className={styles.loadMoreBtn} onClick={handleLoadMore}>
-                    Load more
+                  <button 
+                    className={styles.loadMoreBtn} 
+                    onClick={handleLoadMore}
+                    disabled={loadingMore}
+                  >
+                    {loadingMore ? 'Завантаження...' : 'Load more'}
                   </button>
                 </div>
               )}

@@ -11,7 +11,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url('https://www.figma.com/api/mcp/asset/4d4d4539-4753-4caa-a271-f79ad21c3cd4');
+  background-image: url('/hero-image.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -142,7 +142,7 @@
 
 .loading p {
   font-size: 20px;
-  color: #8d929a;
+  color: #8E929A;
   font-weight: 500;
 }
 

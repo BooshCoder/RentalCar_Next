@@ -1,28 +1,37 @@
 import { Car as ApiCar } from './api';
 import { Car } from '@/types';
 
-// Адаптер для перетворення даних з API у формат, який використовується в проекті
+const uuidToNumericIdMap = new Map<string, number>();
+let nextNumericId = 1;
+
 export function adaptCarFromApi(apiCar: ApiCar): Car {
-  // Парсинг rentalConditions з рядка (може бути рядком або масивом)
-  let rentalConditions: string[] = [];
-  if (typeof apiCar.rentalConditions === 'string') {
-    rentalConditions = apiCar.rentalConditions.split('\n').filter((condition: string) => condition.trim());
-  } else if (Array.isArray(apiCar.rentalConditions)) {
-    rentalConditions = apiCar.rentalConditions;
+  const rentalConditions = Array.isArray(apiCar.rentalConditions) 
+    ? apiCar.rentalConditions 
+    : [];
+
+  const price = parseInt(apiCar.rentalPrice || '0', 10);
+
+  const addressParts = apiCar.address?.split(',').map(part => part.trim()) || [];
+  let location = '';
+  let country = '';
+  
+  if (addressParts.length >= 2) {
+    location = addressParts[addressParts.length - 2] || '';
+    country = addressParts[addressParts.length - 1] || '';
+  } else if (addressParts.length === 1) {
+    location = addressParts[0] || '';
   }
 
-  // Парсинг rentalPrice для отримання числового значення
-  const priceMatch = apiCar.rentalPrice?.match(/\$(\d+)/);
-  const price = priceMatch ? parseInt(priceMatch[1], 10) : 0;
-
-  // Парсинг address для отримання location та country
-  const addressParts = apiCar.address?.split(',') || [];
-  const location = addressParts[0]?.trim() || '';
-  const country = addressParts[1]?.trim() || '';
+  let numericId = uuidToNumericIdMap.get(apiCar.id);
+  if (!numericId) {
+    numericId = nextNumericId++;
+    uuidToNumericIdMap.set(apiCar.id, numericId);
+  }
 
   return {
-    id: apiCar.id,
-    make: apiCar.make,
+    id: numericId,
+    uuid: apiCar.id,
+    make: apiCar.brand,
     model: apiCar.model,
     year: apiCar.year,
     type: apiCar.type,
@@ -42,5 +51,14 @@ export function adaptCarFromApi(apiCar: ApiCar): Car {
     rentalConditions: rentalConditions,
     accessories: [...(apiCar.accessories || []), ...(apiCar.functionalities || [])],
   };
+}
+
+export function getUuidByNumericId(numericId: number): string | null {
+  for (const [uuid, id] of uuidToNumericIdMap.entries()) {
+    if (id === numericId) {
+      return uuid;
+    }
+  }
+  return null;
 }
 

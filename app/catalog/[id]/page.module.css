@@ -26,7 +26,7 @@
   position: relative;
   width: 100%;
   height: 512px;
-  border-radius: 18.742px;
+  border-radius: 18px;
   overflow: hidden;
 }
 
@@ -41,87 +41,65 @@
   display: flex;
   flex-direction: column;
   gap: 32px;
-  width: 488px;
 }
 
-.detailsContent {
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
-  width: 100%;
-}
-
-.titleSection {
+.carTitleSection {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  width: 100%;
 }
 
-.titleRow {
+.carTitleGroup {
   display: flex;
-  align-items: baseline;
-  justify-content: space-between;
+  align-items: center;
+  gap: 0;
   width: 100%;
-  min-height: 32px;
 }
 
 .carTitle {
-  font-family: var(--font-family);
+  font-family: 'Manrope', sans-serif;
   font-weight: 600;
   font-size: 24px;
   line-height: 32px;
   color: #101828;
   margin: 0;
-  padding: 0;
-  text-align: left;
+  flex: 1;
 }
 
 .carId {
-  font-family: var(--font-family);
+  font-family: 'Manrope', sans-serif;
   font-weight: 500;
   font-size: 16px;
   line-height: 20px;
-  color: #8d929a;
-  margin: 0;
-  padding: 0;
-  flex-shrink: 0;
+  color: #8D929A;
+  margin-left: auto;
 }
 
-.carDetails {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  width: 100%;
-}
-
-.metaRow {
+.carMetaRow {
   display: flex;
   gap: 16px;
   align-items: flex-end;
-  width: 100%;
 }
 
 .carLocation {
   display: flex;
   gap: 4px;
   align-items: center;
-  font-family: var(--font-family);
+  font-family: 'Manrope', sans-serif;
   font-weight: 500;
   font-size: 16px;
   line-height: 20px;
   color: #101828;
 }
 
-.locationIcon {
+.carLocation svg {
   width: 16px;
-  height: auto;
+  height: 16px;
   flex-shrink: 0;
-  display: block;
 }
 
 .carMileage {
-  font-family: var(--font-family);
+  font-family: 'Manrope', sans-serif;
   font-weight: 500;
   font-size: 16px;
   line-height: 20px;
@@ -129,34 +107,30 @@
 }
 
 .carPriceLarge {
-  font-family: var(--font-family);
+  font-family: 'Manrope', sans-serif;
   font-weight: 600;
   font-size: 24px;
   line-height: 32px;
-  color: #3470ff;
-  margin: 0;
-  width: 100%;
+  color: #3470FF;
+  margin-top: 16px;
 }
 
 .carDescription {
-  font-family: var(--font-family);
+  font-family: 'Manrope', sans-serif;
   font-weight: 500;
   font-size: 16px;
   line-height: 20px;
   color: #101828;
-  margin: 0;
-  width: 100%;
 }
 
 .carInfoSection {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  width: 100%;
 }
 
 .infoSectionTitle {
-  font-family: var(--font-family);
+  font-family: 'Manrope', sans-serif;
   font-weight: 600;
   font-size: 20px;
   line-height: 24px;
@@ -182,7 +156,7 @@
   display: flex;
   gap: 8px;
   align-items: center;
-  font-family: var(--font-family);
+  font-family: 'Manrope', sans-serif;
   font-weight: 500;
   font-size: 16px;
   line-height: 20px;
@@ -205,22 +179,28 @@
     gap: 32px;
   }
 
-  .detailsRight {
-    width: 100%;
-  }
-
   .carImageLarge {
     height: 300px;
   }
 
-  .titleRow {
+  .carTitleGroup {
     flex-direction: column;
     align-items: flex-start;
-    gap: 4px;
   }
 
-  .metaRow {
+  .carMetaRow {
     flex-direction: column;
     align-items: flex-start;
   }
+
+  .carTitleGroup {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .carId {
+    margin-left: 0;
+    margin-top: 4px;
+  }
 }
+

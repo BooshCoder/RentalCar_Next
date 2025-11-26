@@ -1,18 +1,17 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Filters as FiltersType } from '@/types';
-import { Car } from '@/types';
-import { getUniqueBrandsService, getUniquePricesService, filterCarsService } from '@/lib/carsService';
+import { getUniqueBrandsService, getUniquePricesService } from '@/lib/carsService';
 import CustomSelect from './CustomSelect';
 import styles from './Filters.module.css';
 
 interface FiltersProps {
-  onFilterChange: (filteredCars: Car[]) => void;
+  onFilterChange: () => void;
 }
 
-export default function Filters({ onFilterChange }: FiltersProps) {
+function FiltersContent({ onFilterChange }: FiltersProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   
@@ -30,13 +29,6 @@ export default function Filters({ onFilterChange }: FiltersProps) {
   useEffect(() => {
     loadFilterOptions();
   }, []);
-
-  useEffect(() => {
-    if (!loading) {
-      applyFilters();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loading]);
 
   const loadFilterOptions = async () => {
     try {
@@ -59,33 +51,18 @@ export default function Filters({ onFilterChange }: FiltersProps) {
   };
 
   const handleSearch = () => {
-    applyFilters();
+    applyFilters(filters);
   };
 
-  const applyFilters = async () => {
-    try {
-      const params = {
-        make: filters.brand || undefined,
-        rentalPrice: filters.price ? `$${filters.price}` : undefined,
-        mileageFrom: filters.mileageFrom ? filters.mileageFrom.replace(/\s/g, '') : undefined,
-        mileageTo: filters.mileageTo ? filters.mileageTo.replace(/\s/g, '') : undefined,
-      };
+  const applyFilters = (currentFilters: FiltersType) => {
+    const urlParams = new URLSearchParams();
+    if (currentFilters.brand) urlParams.set('brand', currentFilters.brand);
+    if (currentFilters.price) urlParams.set('price', currentFilters.price);
+    if (currentFilters.mileageFrom) urlParams.set('mileageFrom', currentFilters.mileageFrom);
+    if (currentFilters.mileageTo) urlParams.set('mileageTo', currentFilters.mileageTo);
 
-      const filteredCars = await filterCarsService(params);
-
-      // Оновлення URL
-      const urlParams = new URLSearchParams();
-      if (filters.brand) urlParams.set('brand', filters.brand);
-      if (filters.price) urlParams.set('price', filters.price);
-      if (filters.mileageFrom) urlParams.set('mileageFrom', filters.mileageFrom);
-      if (filters.mileageTo) urlParams.set('mileageTo', filters.mileageTo);
-
-      router.push(`/catalog${urlParams.toString() ? '?' + urlParams.toString() : ''}`, { scroll: false });
-
-      onFilterChange(filteredCars);
-    } catch (error) {
-      console.error('Error applying filters:', error);
-    }
+    router.push(`/catalog${urlParams.toString() ? '?' + urlParams.toString() : ''}`, { scroll: false });
+    onFilterChange();
   };
 
   return (
@@ -107,7 +84,6 @@ export default function Filters({ onFilterChange }: FiltersProps) {
         onChange={(value) => handleFilterChange('price', value)}
         width={196}
         formatOption={(option) => {
-          // Для відображення вибраного значення додаємо $
           return `$${option}`;
         }}
       />
@@ -136,6 +112,14 @@ export default function Filters({ onFilterChange }: FiltersProps) {
         Search
       </button>
     </div>
+  );
+}
+
+export default function Filters({ onFilterChange }: FiltersProps) {
+  return (
+    <Suspense fallback={<div className={styles.filters}>Завантаження...</div>}>
+      <FiltersContent onFilterChange={onFilterChange} />
+    </Suspense>
   );
 }
 

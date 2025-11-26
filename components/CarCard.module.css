@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   gap: 28px;
+  height: 100%;
   animation: fadeInUp 0.5s ease-out;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
@@ -114,21 +115,30 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  flex: 1;
 }
 
 .cardHeader {
   display: flex;
-  justify-content: space-between;
   align-items: flex-start;
-  gap: 16px;
+  gap: 87px;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .cardHeader {
+    gap: 20px;
+  }
 }
 
 .cardTitle {
+  font-family: 'Manrope', sans-serif;
   font-weight: 500;
   font-size: 16px;
   line-height: 20px;
   color: #101828;
   margin: 0;
+  white-space: nowrap;
 }
 
 .cardTitleAccent {
@@ -136,6 +146,7 @@
 }
 
 .cardPrice {
+  font-family: 'Manrope', sans-serif;
   font-weight: 500;
   font-size: 16px;
   line-height: 20px;
@@ -153,14 +164,19 @@
   display: flex;
   gap: 6px;
   align-items: center;
+  font-family: 'Manrope', sans-serif;
   font-weight: 400;
   font-size: 12px;
   line-height: 16px;
-  color: #8d929a;
+  color: #8D929A;
+  flex-wrap: wrap;
 }
 
 .separator {
-  color: #8d929a;
+  width: 1px;
+  height: 16px;
+  background-color: #8D929A;
+  flex-shrink: 0;
 }
 
 .btn {
@@ -181,6 +197,7 @@
   border: none;
   cursor: pointer;
   white-space: nowrap;
+  margin-top: auto;
 }
 
 .btn:hover {

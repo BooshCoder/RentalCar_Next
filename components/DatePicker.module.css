@@ -1,0 +1,165 @@
+.datePicker {
+  position: relative;
+  width: 100%;
+}
+
+.dateInput {
+  background-color: #f7f7f7;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  width: 100%;
+}
+
+.dateInput.error {
+  border: 1px solid #ef4444;
+  background-color: #fef2f2;
+}
+
+.input {
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  color: #101828;
+  flex: 1;
+  cursor: pointer;
+}
+
+.input::placeholder {
+  color: #8d929a;
+}
+
+.calendarIcon {
+  flex-shrink: 0;
+  margin-left: 8px;
+}
+
+.calendar {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 12px;
+  z-index: 1000;
+  width: 276px;
+}
+
+.calendarHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #3470ff;
+}
+
+.monthYear {
+  display: flex;
+  align-items: center;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 1.2;
+  color: #101828;
+}
+
+.navigation {
+  display: flex;
+  gap: 0;
+}
+
+.navButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s ease;
+  width: 24px;
+  height: 24px;
+}
+
+.navButton:hover {
+  opacity: 0.7;
+}
+
+.daysOfWeek {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0;
+  margin-bottom: 0;
+}
+
+.dayName {
+  text-align: center;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 1.2;
+  color: #8d929a;
+  padding: 0;
+  width: 36px;
+}
+
+.daysGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0;
+  margin-bottom: 0;
+}
+
+.day {
+  background: #ffffff;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 1.2;
+  color: #101828;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  height: 32px;
+  width: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.day:hover:not(:disabled) {
+  background-color: #f7f7f7;
+}
+
+.day.otherMonth {
+  color: #8d929a;
+}
+
+.day.selected {
+  background-color: #3470ff;
+  color: #f7f7f7;
+  border-radius: 32px;
+}
+
+.day.today {
+  font-weight: 400;
+}
+
+.day:disabled {
+  cursor: not-allowed;
+}
+
+

@@ -34,33 +34,35 @@ export default async function DetailsPage({ params }: DetailsPageProps) {
           </div>
 
           <div className={styles.detailsRight}>
-            <div className={styles.detailsContent}>
-              <div className={styles.titleSection}>
-                <div className={styles.titleRow}>
-                  <h1 className={styles.carTitle}>
-                    {car.make} {car.model}, {car.year}
-                  </h1>
-                  <span className={styles.carId}>Id: {car.id}</span>
-                </div>
-                <div className={styles.carDetails}>
-                  <div className={styles.metaRow}>
-                    <div className={styles.carLocation}>
-                      <img 
-                        src="/location-icon.svg" 
-                        alt="Location" 
-                        className={styles.locationIcon}
-                      />
-                      <span>{car.location}, {car.country}</span>
-                    </div>
-                    <span className={styles.carMileage}>
-                      Mileage: {formatMileage(car.mileage)} km
-                    </span>
-                  </div>
-                  <div className={styles.carPriceLarge}>${car.price}</div>
-                </div>
+            <div className={styles.carTitleSection}>
+              <div className={styles.carTitleGroup}>
+                <h1 className={styles.carTitle}>
+                  {car.make} {car.model}, {car.year}
+                </h1>
+                <span className={styles.carId}>Id: {car.id}</span>
               </div>
-              <p className={styles.carDescription}>{car.description}</p>
+              <div className={styles.carMetaRow}>
+                <div className={styles.carLocation}>
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path
+                      d="M8 8.5C8.82843 8.5 9.5 7.82843 9.5 7C9.5 6.17157 8.82843 5.5 8 5.5C7.17157 5.5 6.5 6.17157 6.5 7C6.5 7.82843 7.17157 8.5 8 8.5Z"
+                      fill="#101828"
+                    />
+                    <path
+                      d="M8 2C5.79 2 4 3.79 4 6C4 9.5 8 13 8 13C8 13 12 9.5 12 6C12 3.79 10.21 2 8 2ZM8 8.5C7.17 8.5 6.5 7.83 6.5 7C6.5 6.17 7.17 5.5 8 5.5C8.83 5.5 9.5 6.17 9.5 7C9.5 7.83 8.83 8.5 8 8.5Z"
+                      fill="#101828"
+                    />
+                  </svg>
+                  <span>{car.location}, {car.country}</span>
+                </div>
+                <span className={styles.carMileage}>
+                  Mileage: {formatMileage(car.mileage)} km
+                </span>
+              </div>
+              <div className={styles.carPriceLarge}>${car.price}</div>
             </div>
+
+            <p className={styles.carDescription}>{car.description}</p>
 
             <div className={styles.carInfoSection}>
               <h3 className={styles.infoSectionTitle}>Rental Conditions:</h3>

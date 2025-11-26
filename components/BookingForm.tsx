@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, FormEvent } from 'react';
+import DatePicker from './DatePicker';
 import styles from './BookingForm.module.css';
 
 export default function BookingForm() {
@@ -28,9 +29,15 @@ export default function BookingForm() {
 
   const validateDate = (date: string): string => {
     if (!date.trim()) return 'Дата бронювання обов\'язкова';
-    const selectedDate = new Date(date);
+    const parts = date.split('.');
+    if (parts.length !== 3) return 'Введіть коректну дату';
+    const day = parseInt(parts[0], 10);
+    const month = parseInt(parts[1], 10) - 1;
+    const year = parseInt(parts[2], 10);
+    const selectedDate = new Date(year, month, day);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+    selectedDate.setHours(0, 0, 0, 0);
     if (selectedDate < today) return 'Дата повинна бути в майбутньому';
     return '';
   };
@@ -38,7 +45,6 @@ export default function BookingForm() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    // Очищення помилки при зміні
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
@@ -50,7 +56,6 @@ export default function BookingForm() {
 
     if (name === 'name') error = validateName(value);
     else if (name === 'email') error = validateEmail(value);
-    else if (name === 'date') error = validateDate(value);
 
     if (error) {
       setErrors(prev => ({ ...prev, [name]: error }));
@@ -74,7 +79,6 @@ export default function BookingForm() {
       return;
     }
 
-    // Успішна відправка
     setSuccess(true);
     setFormData({ name: '', email: '', date: '', comment: '' });
     setErrors({});
@@ -123,14 +127,16 @@ export default function BookingForm() {
         </div>
 
         <div className={styles.formGroup}>
-          <input
-            type="date"
-            name="date"
-            className={`${styles.formInput} ${errors.date ? styles.error : ''}`}
-            placeholder="Booking date"
+          <DatePicker
             value={formData.date}
-            onChange={handleChange}
-            onBlur={handleBlur}
+            onChange={(date) => {
+              setFormData(prev => ({ ...prev, date }));
+              if (errors.date) {
+                setErrors(prev => ({ ...prev, date: '' }));
+              }
+            }}
+            placeholder="дд.мм.рррр"
+            error={!!errors.date}
           />
           {errors.date && <div className={styles.errorMessage}>{errors.date}</div>}
         </div>
