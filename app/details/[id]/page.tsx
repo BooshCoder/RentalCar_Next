@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
-import { getCarById, formatMileage } from '@/data/cars';
+import { getCarByIdService } from '@/lib/carsService';
+import { formatMileage } from '@/data/cars';
 import BookingForm from '@/components/BookingForm';
 import styles from './page.module.css';
 
@@ -9,8 +10,8 @@ interface DetailsPageProps {
   };
 }
 
-export default function DetailsPage({ params }: DetailsPageProps) {
-  const car = getCarById(parseInt(params.id));
+export default async function DetailsPage({ params }: DetailsPageProps) {
+  const car = await getCarByIdService(parseInt(params.id));
 
   if (!car) {
     notFound();

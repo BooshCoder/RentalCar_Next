@@ -28,6 +28,18 @@
   font-weight: 500;
 }
 
+.loading {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 80px 0;
+}
+
+.loading p {
+  font-size: 20px;
+  color: #8d929a;
+  font-weight: 500;
+}
+
 .loadMoreWrapper {
   display: flex;
   justify-content: center;

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Car } from '@/types';
-import { getAllCars } from '@/data/cars';
+import { getAllCarsService } from '@/lib/carsService';
 import Filters from '@/components/Filters';
 import CarCard from '@/components/CarCard';
 import styles from './page.module.css';
@@ -10,8 +10,25 @@ import styles from './page.module.css';
 const CARDS_PER_PAGE = 4;
 
 export default function CatalogPage() {
-  const [cars, setCars] = useState<Car[]>(getAllCars());
+  const [cars, setCars] = useState<Car[]>([]);
+  const [loading, setLoading] = useState(true);
   const [displayedCount, setDisplayedCount] = useState(CARDS_PER_PAGE);
+
+  useEffect(() => {
+    loadCars();
+  }, []);
+
+  const loadCars = async () => {
+    try {
+      setLoading(true);
+      const allCars = await getAllCarsService();
+      setCars(allCars);
+    } catch (error) {
+      console.error('Error loading cars:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleFilterChange = (filteredCars: Car[]) => {
     setCars(filteredCars);
@@ -24,6 +41,18 @@ export default function CatalogPage() {
 
   const displayedCars = cars.slice(0, displayedCount);
   const hasMore = displayedCount < cars.length;
+
+  if (loading) {
+    return (
+      <section className={styles.catalogSection}>
+        <div className={styles.container}>
+          <div className={styles.loading}>
+            <p>Завантаження...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className={styles.catalogSection}>
@@ -55,4 +84,5 @@ export default function CatalogPage() {
     </section>
   );
 }
+
 

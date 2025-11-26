@@ -3,12 +3,13 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Filters as FiltersType } from '@/types';
-import { getAllCars, getUniqueBrands, getUniquePrices } from '@/data/cars';
+import { Car } from '@/types';
+import { getUniqueBrandsService, getUniquePricesService, filterCarsService } from '@/lib/carsService';
 import CustomSelect from './CustomSelect';
 import styles from './Filters.module.css';
 
 interface FiltersProps {
-  onFilterChange: (filteredCars: ReturnType<typeof getAllCars>) => void;
+  onFilterChange: (filteredCars: Car[]) => void;
 }
 
 export default function Filters({ onFilterChange }: FiltersProps) {
@@ -22,14 +23,36 @@ export default function Filters({ onFilterChange }: FiltersProps) {
     mileageTo: searchParams.get('mileageTo') || '',
   });
 
-  const brands = getUniqueBrands();
-  const prices = getUniquePrices();
+  const [brands, setBrands] = useState<string[]>([]);
+  const [prices, setPrices] = useState<number[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Застосувати фільтри при завантаженні сторінки з URL параметрів
   useEffect(() => {
-    applyFilters();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    loadFilterOptions();
   }, []);
+
+  useEffect(() => {
+    if (!loading) {
+      applyFilters();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading]);
+
+  const loadFilterOptions = async () => {
+    try {
+      setLoading(true);
+      const [brandsData, pricesData] = await Promise.all([
+        getUniqueBrandsService(),
+        getUniquePricesService()
+      ]);
+      setBrands(brandsData);
+      setPrices(pricesData);
+    } catch (error) {
+      console.error('Error loading filter options:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleFilterChange = (key: keyof FiltersType, value: string) => {
     setFilters(prev => ({ ...prev, [key]: value }));
@@ -39,36 +62,30 @@ export default function Filters({ onFilterChange }: FiltersProps) {
     applyFilters();
   };
 
-  const applyFilters = () => {
-    const allCars = getAllCars();
-    
-    const filteredCars = allCars.filter(car => {
-      if (filters.brand && car.make !== filters.brand) return false;
-      if (filters.price) {
-        const selectedPrice = parseInt(filters.price.replace('$', ''));
-        if (car.price !== selectedPrice) return false;
-      }
-      if (filters.mileageFrom) {
-        const mileageFrom = parseInt(filters.mileageFrom.replace(/\s/g, ''));
-        if (car.mileage < mileageFrom) return false;
-      }
-      if (filters.mileageTo) {
-        const mileageTo = parseInt(filters.mileageTo.replace(/\s/g, ''));
-        if (car.mileage > mileageTo) return false;
-      }
-      return true;
-    });
+  const applyFilters = async () => {
+    try {
+      const params = {
+        make: filters.brand || undefined,
+        rentalPrice: filters.price ? `$${filters.price}` : undefined,
+        mileageFrom: filters.mileageFrom ? filters.mileageFrom.replace(/\s/g, '') : undefined,
+        mileageTo: filters.mileageTo ? filters.mileageTo.replace(/\s/g, '') : undefined,
+      };
 
-    // Оновлення URL
-    const params = new URLSearchParams();
-    if (filters.brand) params.set('brand', filters.brand);
-    if (filters.price) params.set('price', filters.price);
-    if (filters.mileageFrom) params.set('mileageFrom', filters.mileageFrom);
-    if (filters.mileageTo) params.set('mileageTo', filters.mileageTo);
+      const filteredCars = await filterCarsService(params);
 
-    router.push(`/catalog${params.toString() ? '?' + params.toString() : ''}`, { scroll: false });
+      // Оновлення URL
+      const urlParams = new URLSearchParams();
+      if (filters.brand) urlParams.set('brand', filters.brand);
+      if (filters.price) urlParams.set('price', filters.price);
+      if (filters.mileageFrom) urlParams.set('mileageFrom', filters.mileageFrom);
+      if (filters.mileageTo) urlParams.set('mileageTo', filters.mileageTo);
 
-    onFilterChange(filteredCars);
+      router.push(`/catalog${urlParams.toString() ? '?' + urlParams.toString() : ''}`, { scroll: false });
+
+      onFilterChange(filteredCars);
+    } catch (error) {
+      console.error('Error applying filters:', error);
+    }
   };
 
   return (
